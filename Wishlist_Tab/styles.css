@@ -1,0 +1,4 @@
+/* hide original title */
+.b-header_cart-title {
+    display: none;
+}
