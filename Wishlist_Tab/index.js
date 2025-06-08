@@ -6,18 +6,15 @@ const wishlist_tab = {
             .b-header_cart-title {
                 display: none;
             }
-
             .wl_tabs_container {
                 display: flex;
                 gap: 24px;
             }
-
             .wl_tab_view {
                 display: none;
                 border-top: 1px solid #dfdfe0;
                 padding: 24px 0px;
             }
-            
             .tab_wishlist,
             .tab_shopping_bag {
                 display: flex;
@@ -30,38 +27,30 @@ const wishlist_tab = {
                 cursor: pointer;
                 color: #6e6f6f;
             }
-            
             .button_container {
                 margin: 20px 0;
             }
-
             .active {
                 border-bottom: 1px solid #000;
                 color: #000
             }
-
             .wl_empty_text {
                 margin-bottom: 48px;
-            }
-            
+            }      
             .wishlist-messages {
                 margin-bottom: 64px;
             }
-
             .wishlist_guest_top_actions {
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
             }
-
             .wishlist_guest_top_message {
                 margin-bottom: 24px;
             }
-
             .wishlist-header {
                 margin-bottom: 20px;
             }
-
             .wishlist-grid {
                 display: grid;
                 grid-gap: 4px;
@@ -72,7 +61,6 @@ const wishlist_tab = {
             .l-cart_product-head .l-cart_product-image {
                 display: none;
             }
-        
         `;
         document.head.appendChild(css);
     },

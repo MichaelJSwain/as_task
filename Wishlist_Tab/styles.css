@@ -2,3 +2,58 @@
 .b-header_cart-title {
     display: none;
 }
+.wl_tabs_container {
+    display: flex;
+    gap: 24px;
+}
+.wl_tab_view {
+    display: none;
+    border-top: 1px solid #dfdfe0;
+    padding: 24px 0px;
+}
+.tab_wishlist,
+.tab_shopping_bag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 44px;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: #6e6f6f;
+}
+.button_container {
+    margin: 20px 0;
+}
+.active {
+    border-bottom: 1px solid #000;
+    color: #000
+}
+.wl_empty_text {
+    margin-bottom: 48px;
+}      
+.wishlist-messages {
+    margin-bottom: 64px;
+}
+.wishlist_guest_top_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.wishlist_guest_top_message {
+    margin-bottom: 24px;
+}
+.wishlist-header {
+    margin-bottom: 20px;
+}
+.wishlist-grid {
+    display: grid;
+    grid-gap: 4px;
+    grid-template-columns: repeat(2, calc(50% - 2px));
+}
+
+/* hide origin item number */
+.l-cart_product-head .l-cart_product-image {
+    display: none;
+}

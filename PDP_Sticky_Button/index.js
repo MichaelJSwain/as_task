@@ -27,7 +27,7 @@ const pdp_sticky_button = {
                 padding: 0 16px;
                 background: black;
                 color: white;
-                letter-spacing: 1.2px;
+                letter-spacing: 1px;
                 cursor: pointer;
                 line-height: 1;
                 text-align: center;
@@ -72,9 +72,18 @@ const pdp_sticky_button = {
         document.head.appendChild(css);
     },
     copy: {
-        en: 'Add to bag',
-        fr: 'AJOUTER AU PANIER',
-        de: 'Zum warenkorb hinzufügen'
+        en: {
+            a2bLabel: 'Add to bag',
+            selectSizeLabel: 'Select size'
+        },
+        fr: {
+            a2bLabel: 'AJOUTER AU PANIER',
+            selectSizeLabel: 'SÉLECTIONNER TAILLE'
+        },
+        de: {
+            a2bLabel: 'Zum warenkorb hinzufügen',
+            selectSizeLabel: 'Grösse auswählen'
+        }
     }[window.CQuotient.locale.split('_')[0]],
     getProductImageAndPrice: () => {
         // get first image from carousel
@@ -82,20 +91,19 @@ const pdp_sticky_button = {
         const productPrice = document.querySelector('.b-product_details .b-price-item').textContent;
         const productPriceDiscounted = document.querySelector('.b-product_details .b-price-item.m-new') ? document.querySelector('.b-product_details .b-price-item.m-new').textContent : null;
         const productName = document.querySelector('.b-product_details-name').textContent;
-        const buttonText = pdp_sticky_button.copy;
         return {
             productImage,
             productPrice,
             productPriceDiscounted,
-            productName,
-            buttonText
+            productName
         }
     },
     createDesktopStickyA2Bbutton: (productDetails) => {
-        const { productImage, productPrice, productPriceDiscounted, productName, buttonText } = productDetails;
-        const btn = document.createElement('div');
-        btn.setAttribute('class', 'sticky-btn-container');
-        btn.innerHTML = `
+        const { productImage, productPrice, productPriceDiscounted, productName } = productDetails;
+        const { a2bLabel, selectSizeLabel } = pdp_sticky_button.copy;
+        const stickyButtonContainer = document.createElement('div');
+        stickyButtonContainer.setAttribute('class', 'sticky-btn-container');
+        stickyButtonContainer.innerHTML = `
             <div>
                 <div class="sticky-btn-left-col">
                     <div class="sticky-btn-img-container">
@@ -117,37 +125,32 @@ const pdp_sticky_button = {
                 </div>
             </div>
             <div class="sticky-btn-right-col">
-                <button>${buttonText}</button>
+                <button>${a2bLabel}</button>
             </div> 
         `;
-        btn.querySelector('button').addEventListener('click', () => {
-            document.querySelector('.b-product_actions-buttons [data-id="addToCart"]').click();
-            // if size is not selected, scroll to the size selector
-            // if (!document.querySelector('.b-variations_item-content [aria-checked="true"]')) {
-            //     document.getElementById("b-variations_item-content ").scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-            // }
-        })
-       return btn;
-    },
-    createMobileProductDetailsElem: (productImage, productPrice, productName) => {
-        const btn = document.createElement('div');
-        btn.setAttribute('class', 'mobile-sticky-btn-container');
-        btn.innerHTML = `
-            <div class="mobile-sticky-btn-img-container">
-                <img class="mobile-sticky-btn-img" src="${productImage}"/>
-            </div>
-            <div class="mobile-sticky-btn-text-container">
-                <p>${productName}</p>
-                <div>
-                    <span>${productPrice}</span>
-                    <span></span>
-                </div>
-            </div>
-        `;
 
-        return btn;
+        const btn = stickyButtonContainer.querySelector('button');
+
+        btn.addEventListener('click', () => {
+            if (document.querySelector('.b-product_actions-buttons [data-id="addToCart"]')) {
+                document.querySelector('.b-product_actions-buttons [data-id="addToCart"]').click();
+            }
+        });
+        
+        btn.addEventListener('mouseover', () => {
+            if (!document.querySelector('.m-size .b-variation_swatch[aria-checked=true]:not([data-tau-size-id="One Size"])') && !document.querySelector('.b-variation_swatch[data-tau-size-id="One Size"]')) {
+                btn.textContent = selectSizeLabel;
+            }
+        });
+
+        btn.addEventListener('mouseout', () => {
+            if (!document.querySelector('.m-size .b-variation_swatch[aria-checked=true]:not([data-tau-size-id="One Size"])') || !document.querySelector('.b-variation_swatch[data-tau-size-id="One Size"]')) {
+                btn.textContent = a2bLabel;
+            }
+        });
+       return stickyButtonContainer;
     },
-    displayDesktopStickyA2BOnScrollDown: () => {
+    handleStickyA2BbuttonTransition: () => {
         window.addEventListener("scroll", () => { 
             let staticButtonPos = document.querySelector('.b-product_actions-buttons').getBoundingClientRect().top;
 
@@ -158,36 +161,53 @@ const pdp_sticky_button = {
             }
         }, false);
     },
+    updateStickyA2Bbutton: (productDetails) => {
+        const { productImage, productName, productPrice, productPriceDiscounted } = productDetails;
+
+        document.querySelector('.sticky-btn-img').setAttribute('src', productImage);
+        document.querySelector('.sticky-btn-product-name').textContent = productName;
+        document.querySelector('.sticky-btn-price').innerHTML =  productPriceDiscounted ? 
+                                `<span class="b-price-item m-old">${productPrice}</span>
+                                <span  class="b-price-item m-new">${productPriceDiscounted}</span>
+                                `:
+                                `<span>${productPrice}</span>`;
+    },
     applyUIChanges: () =>{
         const productDetails = pdp_sticky_button.getProductImageAndPrice();
-        const desktopStickyA2Bbutton = pdp_sticky_button.createDesktopStickyA2Bbutton(productDetails);
-        document.querySelector('body').insertBefore(desktopStickyA2Bbutton, document.querySelector('body').firstElementChild);
-        pdp_sticky_button.displayDesktopStickyA2BOnScrollDown();
+
+        if (!document.querySelector('.sticky-btn-container')) {
+            const desktopStickyA2Bbutton = pdp_sticky_button.createDesktopStickyA2Bbutton(productDetails);
+            document.querySelector('body').insertBefore(desktopStickyA2Bbutton, document.querySelector('body').firstElementChild);
+            pdp_sticky_button.handleStickyA2BbuttonTransition();
+        } else {
+            pdp_sticky_button.updateStickyA2Bbutton(productDetails);
+        }
     },
-    watchURLChanges: () => {
-        let currentURL = window.location.href;
+    observeMutations: () => {
+        const targetNode = document.querySelector('.b-product_slider-track')
+        const config = { attributes: true, childList: true, subtree: true };
 
-        // Create a MutationObserver
-        const observer = new MutationObserver(mutations => {
-            if (currentURL !== window.location.href) {
-                // Reapply UI changes
-                console.log("URL changed:", window.location.href);
-                // pdp_sticky_button.applyUIChanges();
-                currentURL = window.location.href;
+        const callback = (mutationList) => {
+            let hasAppliedChange = false
+
+            for (const mutation of mutationList) {
+                if (!hasAppliedChange) {
+                    pdp_sticky_button.applyUIChanges();
+                    hasAppliedChange = true;
+                }
             }
-        });
+        };
 
-        // Configure the MutationObserver to watch for changes
-        const config = { attributes: true, childList: true, subtree: true, characterData: true };
-        observer.observe(document.documentElement, config);
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
     },
     init: () => {
         pdp_sticky_button.addCss();
 
         pdp_sticky_button.applyUIChanges();
 
-        // Start watching for URL changes
-        pdp_sticky_button.watchURLChanges();
+        // Start watching for DOM mutations e.g. when user selects a variation of a product
+        pdp_sticky_button.observeMutations();
     }
 }
 pdp_sticky_button.init();
