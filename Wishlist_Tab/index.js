@@ -91,8 +91,17 @@ const wishlist_tab = {
             login_button: 'Einloggen',
             register_button: 'Konto erstellen',
             item_count_label: 'Artikel'
+        },
+        default: {
+            shopping_bag_tab: 'Shopping Bag',
+            wl_tab: 'Wishlist',
+            empty_state_message: 'Your wish list is empty.',
+            non_empty_state_message: 'Your wish list is only available on this device and will expire after 7 days. For permanent access, sign in or create an account.',
+            login_button: 'Sign In',
+            register_button: 'Create Account',
+            item_count_label: 'Items'
         }
-    }[window.CQuotient.locale.split('_')[0]],
+    }[window.CQuotient.locale.split('_')[0] || "default"],
     components: {
         emptyWishlistContainer: () => {  
             const { empty_state_message } =  wishlist_tab.copy;
@@ -293,16 +302,18 @@ window.__mirage2 = {petok:"noIJooeY62DJsmWeDIfLIpNpp2y9nZ6rKVQpL6vKYV4-1800-0.0.
         document.querySelector('.l-cart_product').appendChild(wlTabView);
     },
     init: () => {
-        wishlist_tab.addCss();
-        const tabs = wishlist_tab.buildTabs(wishlist_tab.copy);
-        const wlTabView = wishlist_tab.buildWLTabView();
+        if (!document.querySelector('.b-cart_empty')) {
+            wishlist_tab.addCss();
+            const tabs = wishlist_tab.buildTabs(wishlist_tab.copy);
+            const wlTabView = wishlist_tab.buildWLTabView();
 
-        // UI Changes are reapplied if a DOM mutation is triggered e.g. if the user updates the contents of their cart by adding / removing an item
-        optimizely.get('utils').observeSelector('.l-cart_product-head .l-cart_product-image', itemCountElem => {
-            const itemCount = parseInt(itemCountElem.textContent);
-            tabs.querySelector('.item_count').textContent = `(${itemCount})`;
-            wishlist_tab.mountElements(tabs, wlTabView);
-        });
+            // UI Changes are reapplied if a DOM mutation is triggered e.g. if the user updates the contents of their cart by adding / removing an item
+            optimizely.get('utils').observeSelector('.l-cart_product-head .l-cart_product-image', itemCountElem => {
+                const itemCount = parseInt(itemCountElem.textContent);
+                tabs.querySelector('.item_count').textContent = `(${itemCount})`;
+                wishlist_tab.mountElements(tabs, wlTabView);
+            });
+        }
     }
 };
 wishlist_tab.init();

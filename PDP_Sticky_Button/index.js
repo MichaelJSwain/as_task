@@ -83,8 +83,12 @@ const pdp_sticky_button = {
         de: {
             a2bLabel: 'Zum warenkorb hinzufügen',
             selectSizeLabel: 'Grösse auswählen'
+        },
+        default: {
+            a2bLabel: 'Add to bag',
+            selectSizeLabel: 'Select size'
         }
-    }[window.CQuotient.locale.split('_')[0]],
+    }[window.CQuotient.locale.split('_')[0] || 'default'],
     getProductImageAndPrice: () => {
         // get first image from carousel
         const productImage = document.querySelector('.b-product_image img').getAttribute('src');
